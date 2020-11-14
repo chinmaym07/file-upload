@@ -1,0 +1,16 @@
+.template-form{
+    display: flex;
+    
+    align-items:center;
+    flex-direction: column;
+}
+.subfield
+{
+    display: flex;
+}
+input{
+    margin:5px;
+}
+button {
+    margin :10px
+}

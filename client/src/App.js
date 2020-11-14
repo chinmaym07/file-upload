@@ -10,7 +10,7 @@ const App = () => {
     <div className="App">
       <Header />
       <Switch>
-        <Route exact path="/template" component={CreateTemplate}/>
+        <Route exact path="/" component={CreateTemplate}/>
         <Route exact path="/upload" component={UploadFile}/>
       </Switch>
     </div>

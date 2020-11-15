@@ -1,10 +1,10 @@
 import React,{ useState} from 'react';
 import './dropzone.styles.css';
 import axios from 'axios';
-import MessageBox from '../message';
-import Progress from '../progress';
+import MessageBox from '../message/message.component';
+import Progress from '../progress/progress.component';
 
-const DropZone = () => {
+const DropZone = ({history}) => {
     const [file,setFile] = useState('');
     const [fileName,setFileName] = useState("Choose File");
     const [uploadedFile,setUploadedFile] = useState(null)
@@ -28,6 +28,7 @@ const DropZone = () => {
                 },
                 onUploadProgress: progressEvent => {
                     setUploadedPercentage(parseInt(Math.round((progressEvent.loaded * 100)/progressEvent.total)))
+                    
                     setTimeout(()=> setUploadedPercentage(0),10000)
                 }
                 
@@ -62,7 +63,6 @@ const DropZone = () => {
     const dragEnter = (e) => {
         e.preventDefault();
     }
-
     const dragLeave = (e) => {
         e.preventDefault();
     }
@@ -86,35 +86,43 @@ const DropZone = () => {
     }
   
     return (
-        <div className="container">
-            {message ? <MessageBox message={message}/>:null}
-            <form onSubmit={handleSubmit}>
-            <div className="drop-container" onDragOver={dragOver} onDragEnter={dragEnter} onDragLeave={dragLeave} onDrop={fileDrop}>
-                <div className="drop-message">
-                    <div className="upload-icon"></div>
-                    Drag & Drop files here or click to upload
+        <div className="content">
+            <div className="container">
+                {message ? <MessageBox message={message}/>:null}
+                <form onSubmit={handleSubmit}>
+                <div className="drop-container" onDragOver={dragOver} onDragEnter={dragEnter} onDragLeave={dragLeave} onDrop={fileDrop}>
+                    <div className="drop-message">
+                        <div className="upload-icon"></div>
+                        Drag & Drop files here or click to upload
+                    </div>
+                    
                 </div>
-                
-            </div>
-            <input type="file" name="file" onChange={handleChange}/>
-            <Progress percentage={uploadPercentage}/>
-            <input type="submit" value="Upload" className="btn btn-primary mt-4" disabled={file === ''?true:false}/>
-            </form>
-            <div className="file-display-container">
+                <input type="file" name="file" onChange={handleChange} disabled={file !== ''?true:false}/>
+                <Progress percentage={uploadPercentage}/>
+                <input type="submit" value="Upload" className="btn btn-primary mt-4" disabled={file === ''?true:false}/>
+                </form>
+                <div className="file-display-container">
+                    {
+                        file !== ''?
+                            <div className="file-status-bar" key={1}>
+                                <div>
+                                    <div className="file-type-logo"></div>
+                                    <div className="file-type">{fileType(fileName)}</div>
+                                    <span className={`file-name ${file.invalid ? 'file-error' : ''}`}>{file.name}</span>
+                                    {
+                                        file !== ''? <span className="file-size">({fileSize(file.size)})</span>:null 
+                                    }
+                                </div>
+                                <div className="file-remove" onClick={() => setFile('')}>X</div>
+                            </div>:null
+                        
+                    }
+                </div>
                 {
-                    
-                        <div className="file-status-bar" key={1}>
-                            <div>
-                                <div className="file-type-logo"></div>
-                                <div className="file-type">{fileType(fileName)}</div>
-                                <span className={`file-name ${file.invalid ? 'file-error' : ''}`}>{file.name}</span>
-                                {
-                                    file !== ''? <span className="file-size">({fileSize(file.size)})</span>:null 
-                                }
-                            </div>
-                            <div className="file-remove" onClick={() => setFile('')}>X</div>
-                        </div>
-                    
+                uploadPercentage === 100 ? <button onClick={() => history.push({
+                            pathname: '/preview',
+                            state: {file: file}
+                        })}> Click to Proceed For Validation</button>:null
                 }
             </div>
         </div>
